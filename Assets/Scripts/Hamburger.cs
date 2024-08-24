@@ -2,33 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Hamburger : MonoBehaviour
+public class Hamburger : Clickable
 {
-    private Transform objTransform;
-
     private EconomyManager economyManager;
 
-    [SerializeField] private float scaleMultiplier;
-
-    public float foodProduction;
+    public float productionClickPower;
 
     private void Start()
     {
-        economyManager = GameObject.Find("Economy Manager").GetComponent<EconomyManager>();
-        
-        foodProduction = 1;
         objTransform = transform;
+        economyManager = GameObject.Find("Economy Manager").GetComponent<EconomyManager>();
+        productionClickPower = 1;
     }
 
     private void OnMouseDown()
     {
-        objTransform.localScale /= scaleMultiplier;
-
-        economyManager.food += foodProduction;
-    }
-
-    private void OnMouseUp()
-    {
-        objTransform.localScale *= scaleMultiplier;
+        base.doOnMouseDown();
+        economyManager.food += productionClickPower;
     }
 }
