@@ -8,9 +8,9 @@ public class EconomyManager : MonoBehaviour
 {
     public TextMeshProUGUI foodText;
     public TextMeshProUGUI cashText;
-    public TextMeshProUGUI productionPowerText;
+    //public TextMeshProUGUI productionPowerText;
     public TextMeshProUGUI consumptionPowerText;
-    public TextMeshProUGUI cashMultiplierText;
+    //public TextMeshProUGUI cashMultiplierText;
 
     public TextMeshProUGUI fridgeButtonText;
     public TextMeshProUGUI hoodButtonText;
@@ -20,6 +20,7 @@ public class EconomyManager : MonoBehaviour
 
     private Consumer consumer;
     private GameObject producers;
+    private GameObject canvas;
 
     // Food that is produced
     public float food;
@@ -28,6 +29,11 @@ public class EconomyManager : MonoBehaviour
     // How much money will player receive on consuming one point of food
     public float cashMultiplier;
     private float productionPower;
+
+    bool hasOvens;
+    bool hasHood;
+    bool hasFridge;
+    bool hasGasRange;
 
     // Properties of buying objects
 
@@ -46,14 +52,63 @@ public class EconomyManager : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
+    { 
+
         consumer = GameObject.Find("Consumer").GetComponent<Consumer>();
         producers = GameObject.Find("Producers");
+        canvas = GameObject.Find("Canvas");
+
+        LoadData();
+        
+        CheckFurniture();
+
+        SetText();
+        
+    }
+    // Set text for buttons
+    void SetText()
+    {
         fridgeButtonText.text = $"Fridge\n Cost: {fridgeCost}";
         hoodButtonText.text = $"Hood\n Cost: {hoodCost}";
         ovensButtonText.text = $"Ovens\n Cost: {ovensCost}";
         gasRangeButtonText.text = $"Gas Range\n Cost: {gasRangeCost}";
         tableButtonText.text = $"Table Upgrade\n Cost: {consumer.levelUpCost}";
+    }
+    // Load into variables from SaveManager
+    void LoadData()
+    {
+        hasOvens = SaveManager.instance.hasOvens;
+        hasHood = SaveManager.instance.hasHood;
+        hasFridge = SaveManager.instance.hasFridge;
+        hasGasRange = SaveManager.instance.hasGasRange;
+        cash = SaveManager.instance.cash;
+        food = SaveManager.instance.food;
+    }
+
+    // Check if furniture was bought in previous sessions and activate it
+    void CheckFurniture()
+    {
+        if (hasFridge)
+        {
+            producers.transform.Find("Fridge").gameObject.SetActive(true);
+            canvas.transform.Find("Fridge Button").gameObject.SetActive(false);
+        }
+
+        if (hasGasRange) 
+        {
+            producers.transform.Find("Gas Range").gameObject.SetActive(true);
+            canvas.transform.Find("Gas Range Button").gameObject.SetActive(false);
+        }
+        if (hasHood)
+        {
+            producers.transform.Find("Hood").gameObject.SetActive(true);
+            canvas.transform.Find("Hood Button").gameObject.SetActive(false);
+        }
+        if (hasOvens)
+        {
+            producers.transform.Find("Ovens").gameObject.SetActive(true);
+            canvas.transform.Find("Ovens Button").gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame
@@ -61,9 +116,9 @@ public class EconomyManager : MonoBehaviour
     {
         foodText.text = $"Food: {food} p";
         cashText.text = $"Cash: {cash}$";
-        productionPowerText.text = $"Production Power: {productionPower}/s";
+        //productionPowerText.text = $"Production Power: {productionPower}/s";
         consumptionPowerText.text = $"Consumption Power: {consumer.consumePower} p in {consumer.consumeTime} sec";
-        cashMultiplierText.text = $"Cash multiplier: {cashMultiplier}x";
+        //cashMultiplierText.text = $"Cash multiplier: {cashMultiplier}x";
 
     }
 
@@ -74,19 +129,22 @@ public class EconomyManager : MonoBehaviour
             case "Fridge":
                 if (fridgeCost > cash) return false;
                 cash -= fridgeCost;
-                Debug.Log("Нашел холодос");
+                hasFridge = true;
                 break;
             case "Ovens":
                 if (ovensCost > cash) return false;
                 cash -= ovensCost;
+                hasOvens = true;
                 break;
             case "Gas Range":
                 if (gasRangeCost > cash) return false;
                 cash -= gasRangeCost;
+                hasGasRange = true;
                 break;
             case "Hood":
                 if (hoodCost > cash) return false;
                 cash -= hoodCost;
+                hasHood = true;
                 break;
             default:
                 Debug.Log("No object is found");
@@ -94,5 +152,16 @@ public class EconomyManager : MonoBehaviour
         }
         producers.transform.Find(objectName).gameObject.SetActive(true);
         return true;
+    }
+
+    // Store data in SaveManager for future saving 
+    public void TransportData()
+    {
+        SaveManager.instance.hasFridge = hasFridge;
+        SaveManager.instance.hasGasRange = hasGasRange;
+        SaveManager.instance.hasHood = hasHood;
+        SaveManager.instance.hasOvens = hasOvens;
+        SaveManager.instance.cash = cash;
+        SaveManager.instance.food = food;
     }
 }

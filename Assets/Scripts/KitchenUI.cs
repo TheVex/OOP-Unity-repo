@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class KitchenUI : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class KitchenUI : MonoBehaviour
     {
         economyManager = GameObject.FindAnyObjectByType<EconomyManager>();
         consumer = GameObject.FindAnyObjectByType<Consumer>();
+
     }
 
     public void Buy(string name)
@@ -28,4 +30,11 @@ public class KitchenUI : MonoBehaviour
         consumer.Upgrade();
     }
 
+    public void BackToMenu()
+    {
+        economyManager.TransportData();
+        consumer.TransportData();
+        SaveManager.instance.Save();
+        SceneManager.LoadScene(0);
+    }
 }

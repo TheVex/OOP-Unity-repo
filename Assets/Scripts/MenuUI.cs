@@ -10,6 +10,7 @@ public class MenuUI : MonoBehaviour
     
     public void StartGame()
     {
+        SaveManager.instance.Load();
         SceneManager.LoadScene(1);
     }
 

@@ -19,7 +19,22 @@ public class Consumer : Clickable
     void Start()
     {
         objTransform = transform;
+
+        // Setting up level of table
+        level = SaveManager.instance.tableLevel;
+        if (level == 0)
+            level = 1;
+
+        consumeClickPower += level - 1;
+        consumePower += level - 1;
+
+        for (int i = 1; i < level; i++)
+        {
+            MakeChairVisible(i);
+        }
+
         economyManager = GameObject.Find("Economy Manager").GetComponent<EconomyManager>();
+
         StartCoroutine(ConsumeAuto());
     }
 
@@ -66,13 +81,9 @@ public class Consumer : Clickable
         economyManager.cash += foodConsumed * economyManager.cashMultiplier;
     }
 
-    public void Upgrade()
+    void MakeChairVisible(int currentLevel)
     {
-        if (levelUpCost > economyManager.cash)
-        {
-            return;
-        }
-        switch (level)
+        switch (currentLevel)
         {
             case 1:
                 transform.Find("Consumer Chair 1").gameObject.SetActive(true);
@@ -86,9 +97,24 @@ public class Consumer : Clickable
             default:
                 return;
         }
+    }
+
+    public void Upgrade()
+    {
+        if (levelUpCost > economyManager.cash)
+        {
+            return;
+        }
+        MakeChairVisible(level);
         economyManager.cash -= levelUpCost;
         consumePower++;
         consumeClickPower++;
         level++;
+    }
+
+    // Transport data in SaveManager for future saving
+    public void TransportData()
+    {
+        SaveManager.instance.tableLevel = level;
     }
 }
