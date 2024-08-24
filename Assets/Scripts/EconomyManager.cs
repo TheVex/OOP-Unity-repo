@@ -35,6 +35,7 @@ public class EconomyManager : MonoBehaviour
     bool hasFridge;
     bool hasGasRange;
 
+    // ENCAPSULATION
     // Properties of buying objects
 
     [SerializeField] private float m_ovensCost;
@@ -58,6 +59,7 @@ public class EconomyManager : MonoBehaviour
         producers = GameObject.Find("Producers");
         canvas = GameObject.Find("Canvas");
 
+        // ABSTRACTION
         LoadData();
         
         CheckFurniture();

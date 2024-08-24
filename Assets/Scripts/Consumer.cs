@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor.Rendering.Universal;
 using UnityEngine;
 
+// INHERITANCE
 public class Consumer : Clickable
 {
     public float consumeTime;
@@ -48,6 +49,7 @@ public class Consumer : Clickable
         }
     }
 
+    // POLYMORPHISM
     // When player clicks on table to consume
     private void OnMouseDown()
     {
